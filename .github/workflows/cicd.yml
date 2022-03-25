@@ -1,6 +1,6 @@
 name: Hexo Deploy
 
-# 只监听 source 分支的改动
+# 只监听 gh-pages 分支的改动
 on:
   push:
     branches [ gh-pages ]

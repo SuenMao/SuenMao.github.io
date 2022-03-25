@@ -51,7 +51,7 @@ jobs:
           git init
           git config user.name "LinYuXiang087241"
           git config user.email "1524204934@qq.com"
-		  cat /.ssh/id_rsa
+          cat ~/.ssh/id_rsa
           git add .
           git commit -m "Travis CI Auto Builder at $(date +'%Y-%m-%d %H:%M:%S')"
           git push --force --quiet "git@github.com:LinYuXiang087241/LinYuXiang087241.github.io" main:main

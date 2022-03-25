@@ -33,10 +33,20 @@ jobs:
           npm install
       - name: Check out hexo
         run: |
-          git config user.name "LinYuXiang087241"
-          git config user.email "1524204934@qq.com"
-          cd ./public
           hexo version
           hexo clean
           hexo generate
-          hexo d
+      - name: Setup SSH Keys and known_hosts
+        run: |
+          sudo timedatectl set-timezone "Asia/Shanghai"
+          mkdir -p ~/.ssh
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          cd ./public
+          ls
+          git init
+          git config user.name "LinYuXiang087241"
+          git config user.email "1524204934@qq.com"
+          git add .
+          git status
+          git commit -m "Travis CI Auto Builder at $(date +'%Y-%m-%d %H:%M:%S')"
+          git push --force "https://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@github.com/LinYuXiang087241/LinYuXiang087241.github.io.git" main:main

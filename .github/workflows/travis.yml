@@ -38,7 +38,7 @@ jobs:
           hexo generate
       - name: Setup SSH Keys and known_hosts
         env:
-          DELOPY_SECRET: "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"
+          DELOPY_SECRET: "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"
         run: |
           echo ${DELOPY_SECRET}
           sudo timedatectl set-timezone "Asia/Shanghai"

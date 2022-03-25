@@ -33,6 +33,8 @@ jobs:
           npm install
       - name: Check out hexo
         run: |
+          git config user.name "LinYuXiang087241"
+          git config user.email "1524204934@qq.com"
           hexo version
           hexo clean
           hexo generate

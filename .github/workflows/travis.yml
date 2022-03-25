@@ -53,4 +53,4 @@ jobs:
           git config user.email "1524204934@qq.com"
           git add .
           git commit -m "Travis CI Auto Builder at $(date +'%Y-%m-%d %H:%M:%S')"
-          git push --force --quiet "LinYuXiang087241/LinYuXiang087241.github.io.git" main:main
+          git push --force --quiet "https://github.com/LinYuXiang087241/LinYuXiang087241.github.io.git" main:main

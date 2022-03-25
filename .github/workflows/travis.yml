@@ -1,47 +1,56 @@
-language: node_js
-node_js:
-  - lts/*
+name: Hexo Deploy
 
-# S: Build Lifecycle
-before_install:
-  - export TZ='Asia/Shanghai'
+# 只监听 source 分支的改动
+on:
+  push:
+    branches:
+      - gh-pages
 
-install:
-  - npm install hexo-cli -g
-  - npm install
-
-#before_script:
-        #  - sed -i "s/https:\/\/\(github\.com\/m4d3bug\/m4d3bug\.github\.io\.git\)/https:\/\/$ACCESS_TOKEN@\1/" _config.yml
-        #  - sed -i "656c \ \ client_id: $GT_ID" themes/next/_config.yml
-        #- sed -i "657c \ \ client_id: $GT_SECRET" themes/next/_config.yml
-
-script:
-#  - cat themes/next/_config.yml | wc -l
-#  - sed -i "656c \ \ client_id: $GT_ID" themes/next/_config.yml
-#  - sed -i "657c \ \ client_id: $GT_SECRET" themes/next/_config.yml
-  - hexo version
-  - hexo clean
-  - hexo generate
-
-addons:
-  ssh_known_hosts:
-  - github.com
-
-after_script:
-  - cd ./public
-#  - echo "blog.madebug.net" > CNAME
-  - git init
-  - git config user.name "LinYuXiang087241"
-  - git config user.email "1524204934@qq.com"
-#  - sed -i "s/github_token/${GH_TOKEN}/g" _config.yml || exit 1
-  - git add .
-  - git commit -m "Travis CI Auto Builder at $(date +'%Y-%m-%d %H:%M:%S')"
-  - git push --force --quiet "https://${GH_TOKEN}@${GH_REF}" main:main
-# E: Build LifeCycle
-
-branches:
-  only:
-    - gh-pages
+# 自定义环境变量
 env:
- global:
-    - GH_REF: github.com/LinYuXiang087241/LinYuXiang087241.github.io.git
+  GIT_USER: LinYuXiang087241
+  GIT_EMAIL: 1524204934@qq.com
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 获取博客源码和主题
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      # 这里用的是 Node.js 13.x，14.x 生成 Hexo 静态页面会有问题
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '16'
+
+      # 安装依赖
+      - name: Install Dependencies
+        run: |
+          npm install hexo-cli -g
+          npm install
+
+      - name: Check out hexo
+        run: |
+          hexo version
+          hexo clean
+          hexo generate
+
+      - name: Setup SSH Keys and known_hosts
+        env:
+          DEPLOY_SECRET: ${{ secrets.DEPLOY_SECRET }}
+        run: |
+          sudo timedatectl set-timezone "Asia/Shanghai"
+          mkdir -p ~/.ssh
+          echo "$DEPLOY_SECRET" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          cd ./public
+          git init
+          git config user.name "LinYuXiang087241"
+          git config user.email "1524204934@qq.com"
+          git add .
+          git commit -m "Travis CI Auto Builder at $(date +'%Y-%m-%d %H:%M:%S')"
+          git push --force --quiet "git@github.com:LinYuXiang087241/LinYuXiang087241.github.io.git" main:main
